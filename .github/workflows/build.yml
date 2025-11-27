@@ -1,8 +1,10 @@
 name: Build RayTraceAntiXray
 
+name: Build RayTraceAntiXray
+
 on:
-  workflow_dispatch: # allows manual build
-  push: # builds automatically if you change code
+  workflow_dispatch:   # manual run button
+  push:                # auto-build when new changes pushed
   pull_request:
 
 jobs:
@@ -10,20 +12,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          java-version: '17'     # plugin requires Java 17+
+          java-version: '17'       # required for Paper-based plugins
           distribution: 'temurin'
 
-      - name: Build with Maven (wrapper included)
+      - name: Build using Maven Wrapper
         run: ./mvnw clean package
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+      ## NEW VERSION (Fixes your error)
+      - name: Upload compiled jar
+        uses: actions/upload-artifact@v4
         with:
-          name: RayTraceAntiXray-jar
+          name: RayTraceAntiXray
           path: target/*.jar
+
