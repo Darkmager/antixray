@@ -1,0 +1,43 @@
+name: Auto Build & Release RayTraceAntiXray
+
+on:
+  workflow_dispatch:          # Allows manual builds
+  push:
+    branches: [ "main" ]      # Auto-release when main branch gets updates
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build using Maven Wrapper
+        run: ./mvnw clean package
+
+      - name: Upload artifact to build job
+        uses: actions/upload-artifact@v4
+        with:
+          name: RayTraceAntiXray
+          path: target/*.jar
+
+      #
+      # 🔥 Automatic Release Publishing
+      #
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "build-${{ github.run_number }}"
+          release_name: "RayTraceAntiXray Build #${{ github.run_number }}"
+          files: target/*.jar
+          generate_release_notes: true
