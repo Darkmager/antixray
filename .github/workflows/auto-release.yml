@@ -1,9 +1,9 @@
 name: Build & Publish Latest Release
 
 on:
-  workflow_dispatch:         # You can run manually from Actions tab
+  workflow_dispatch:
   push:
-    branches: [ "main" ]      # Auto-build when main branch updates
+    branches: [ "main" ]      # change if your default branch is master
 
 jobs:
   build:
@@ -22,13 +22,13 @@ jobs:
       - name: Install Maven
         run: sudo apt-get update && sudo apt-get install -y maven
 
-      # IMPORTANT: RayTraceAntiXray is inside its own folder
-      - name: Compile Project
+      # 🔥 build inside correct folder
+      - name: Build plugin
         working-directory: ./RayTraceAntiXray
         run: mvn -B package
 
-      # 🔥 This overwrites the SAME release each time:
-      - name: Upload to "latest" release
+      # 🔥 Publish single always-updated release
+      - name: Upload latest build
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -37,5 +37,5 @@ jobs:
           release_name: "Latest Build"
           make_latest: true
           files: RayTraceAntiXray/RayTraceAntiXray-Plugin/target/*.jar
-          generate_release_notes: true
+
 
