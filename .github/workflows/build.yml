@@ -1,10 +1,8 @@
-name: Build RayTraceAntiXray
-
-name: Build RayTraceAntiXray
+name: Build RayTraceAntiXray   # <- only ONE name field
 
 on:
-  workflow_dispatch:   # manual run button
-  push:                # auto-build when new changes pushed
+  workflow_dispatch:   # Manual run button in Actions tab
+  push:                # Runs when you commit/push changes
   pull_request:
 
 jobs:
@@ -18,14 +16,16 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          java-version: '17'       # required for Paper-based plugins
+          java-version: '17'          # Required for Paper/Paper-plugins
           distribution: 'temurin'
 
       - name: Build using Maven Wrapper
         run: ./mvnw clean package
 
-      ## NEW VERSION (Fixes your error)
-      - name: Upload compiled jar
+      #
+      # UPDATED to fix your deprecated action issue
+      #
+      - name: Upload compiled jar artifact
         uses: actions/upload-artifact@v4
         with:
           name: RayTraceAntiXray
